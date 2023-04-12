@@ -22,22 +22,38 @@ This repository consists of the following:
     <li> The slides for the project presentation are in the file <code>project2_martijn_slides.pdf</code> </li>
 </ol>
 
+Below, I will provide a summary of the EDA, data cleaning, feature engineering, and modeling procedure. More details and figures can be found in each of the notebooks.
+
 
 ## Data Overview
 
-For this project, I used the Ames housing data set, which was pre-split into a train and test data set. The training set consists of 2051 houses and 81 columns, including the sale price. The test set consists of 878 houses, and has the exact same columns exluding the sale price column. The data consists of both numerical columns (eg. the square footage of the land, the number of bathrooms, or the number of fireplaces), and categorical columns (eg. is there a pool, what kind of garage is there, does the property have a fence). The figure below shows a histogram of the target variable, the sale price
+For this project, I used the Ames housing data set, which was pre-split into a train and test data set. The training set consists of 2051 houses and 81 columns, including the sale price. The test set consists of 878 houses, and has the exact same columns exluding the sale price column. The data consists of both numerical columns (eg. the square footage of the land, the number of bathrooms, or the number of fireplaces), and categorical columns (eg. is there a pool, what kind of garage is there, does the property have a fence). 
 
+Two important resources describing the Ames data set are : <br>
+The original paper (De Cock 2011): https://jse.amstat.org/v19n3/decock.pdf <br>
+The data description/dictionary: https://jse.amstat.org/v19n3/decock/DataDocumentation.txt
 
+The figure below shows a histogram of the target variable, the sale price
+
+<img src="./figures/saleprice_dist.png" style="float: left; margin: 20px; height: 400px">
+
+We can already see that the distribution is pretty right-skewed!
 
 ## Data Cleaning
 
-After general inspection of the data, we looked at missing values. The image below shows all the columns in which missing values were detected.
+After general inspection of the data, we looked at missing values. The image below shows all the columns in the training set in which missing values were detected. The grey line shows the total number of rows in the training set.
 
 <img src="./figures/missingvals.png" style="float: left; margin: 20px; height: 400px">
 
-I dealt with the missing values in a few different ways:
+The missing values can be defined into a few different categories, which I dealt with in different ways:
 
 <ol>
     <li> A few of the columns have 'NA' (Not applicable) as a category. Eg. for the 'Alley' column, some houses do not have an Alley and thus have 'NA' filled in. Pandas erroneously interprets this as a NaN when loading in the data. In these cases, I simply imputed the value 'NP' (Not present) </li>
-    <li> 
+    <li> There were a few numerical columns that were directly related to the above columns - eg some houses in which a garage was not present, had a missing value for the 'Garage Area' column. In those cases, it made logical sense to impute a value of zero. This was also the case for some columns related to the basement, and the Masonry veneer. </li>
+    <li> The 'Lot frontage' column represented a special case. Around 15% of houses have missing entries, which is quite significant. The value here certainly can't be zero, as houses are typically required/expected to have street access. What I did instead was to make the assumption that a property is roughly square, and will have frontage on one side. The Lot frontage should therefore be proportional to the square root of the lot area. I tested this assumption and it seems that this holds up roughly speaking, if we subtract some constant. I used this equation to impute the missing Lot frontage value</li>
+    <li> For all the remaining missing values, I imputed the mode (if categorical) or the median (if numerical). These imputations were typically only 1 or 2 rows for each category, so they will likely have a minor effect </li>
 </ol>
+
+I put all of the above imputations, together with some other minor cleaning steps (filtering out a few outliers, recasting a handful of columns to other datatypes) into a function called clean_ames(), so that both the testing and training dataset are cleaned in the exact same manner.
+
+## Feature Engineering
