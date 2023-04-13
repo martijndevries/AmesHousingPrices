@@ -5,10 +5,9 @@ martijndevries91@gmail.com
 
 ## Problem Statement
 
-A real estate company in Ames, Iowa is looking for a new and improved way to evaluate the market value of a house. Using the Ames data set as training data, we will build a predictive linear regression model to predict the sale price of a house as well as possible.
+A real estate company in Ames, Iowa is looking for a new and improved way to evaluate the market value of a house. Using the Ames data set as training data, I will build a predictive linear regression model to predict the sale price of a house.
 
-To gauge the model performance, I will compare my results against a 'benchmark model', which is a simple OLS regression of total living area versus sale price. How much can a more complex model improve over this simple basic model? I will try out different models with different numbers of features using different linear regression techniques, and ultimately identify which model does the best job at predicting the market value of the house.
-
+To gauge the model performance, I will compare my results against a 'benchmark model', which is a simple OLS regression of total living area versus sale price. How much can a more complex model improve over this simple basic model? I will try out different models with different numbers of features using different linear regression techniques, and ultimately identify which model does the best job at predicting the market value of the house. To evaluate and compare models, I will use the r2-score, as well as the root mean squared error (RMSE). 
  
 ## Repository Overview
     
@@ -103,17 +102,23 @@ For each of the tested models, I split the data into a training set and a 'valid
 
 As the Benchmark model, I used a simple OLS regression, using 'tot_area' as the single feature and the sale price as the predictor variable. This model already performs decently by itself: the r2-scores on the training and validation data are 0.69 and 0.64, respectively, indicating that 64% of the variance of the model can be explained by the tot_area parameter. The validation RMSE is \$47000. These are the benchmarks I compare the model against.
 
-### Model 4
+### The Best model
 
-During the modeling, I found that using a log-transform of the sale price works best overall. This is maybe not surprising, given how right-skewed the sale price distribution is, and how many variables seem to have a somewhat linear relationship with log(saleprice). I also found that both OLS and Ridge regression work well, with Ridge regression giving only a minor improvement over OLS. Additionally, I used the RidgeCV() regressor of sklearn to find which penalty term alpha gives the best results using the cross-validation score. Overall, I find that the results obtained with Ridge regression are very similar to those obtained with OLS, indicating that even the most complex of my models is still relatively low in variance, and not overfit.
+During the modeling, I found that using a log-transform of the sale price works best overall. This is maybe not surprising, given how right-skewed the sale price distribution is, and how many variables appear to have a somewhat linear relationship with log(saleprice). 
 
-The figures below show 1) the predicted values versus the residuals (in logspace), and 2) the predicted versus the actual sale prices.
+The most complex model (model 4) clearly scores the best overall, both in terms of r2-scores and RMSE. I also found that both OLS and Ridge regression work well, with Ridge regression giving only a minor improvement over OLS. Additionally, I used the RidgeCV() regressor of sklearn to find which penalty term alpha gives the best results using the cross-validation score. I also tried scaling the data with both StandardScaler and MinMaxScaler, and find that StandardScaler gives slightly better results.
+
+Overall, I find that the results obtained with Ridge regression are very similar to those obtained with OLS, indicating that even the most complex of my models is still relatively low in variance, and not overfit. 
+
+The figures below show 1) the predicted values versus the residuals (in logspace), and 2) the predicted versus the actual sale prices for model 4 with ridge regression.
 
 <img src="./figures/res_predicted_plot.png" styele="float: left; margin: 20px; height: 7s00px">
 
-There is one pretty bad outlier, a house that sold for around \\$12000  but has a model-predicted sale price of around \\$66000. I did notice this house during the feature engineering process, but I could not find a good reason to get rid of it, so I opted to keep it in.
+There is one pretty egregious outlier, a house that sold for around \\$12000  but has a model-predicted sale price of around \\$66000. I did notice this house during the feature engineering process, but I could not find a good justification to remove it, so I opted to keep it in. The outlier is partly a result of the transformation to logspace, and it does not look as bad in linear space.
 
-The best model has a training r2-score of 0.92, a cross-validation r2 of 0.91, a validation r2 score of 0.88. In terms of RMSE, the training and validation scores RMSE scores are 21596 and 22103, respectively. That means this model can explain about 88% of the variance in sale price (versus 64% for the baseline model), and that the RMSE is reduced by about 53\%. 
+The best model has a training r2-score of 0.92, a cross-validation r2 of 0.91, a validation data r2 score of 0.88. In terms of RMSE, the training and validation scores RMSE scores are 21596 and 22103, respectively. That means this model can explain about 88% of the variance in sale price (versus 64% for the baseline model), and that the RMSE is reduced by about 53\%. 
+
+Overall, it looks like models with more features perform better, but there are appear to be diminishing returns. Model 3, which contains 9 numerical and 3 categorical features, only does a little bit worse than model 4, which has 12 numerical and 9 categorical features. A ridge regression of model 3 scores an r2 of 0.85 on the validation data (vs 0.88 for model 4), and an RMSE of 23663 (vs 22103 for model 4).
 
 ## Data Dictionary of Model 4 features
 
@@ -134,7 +139,7 @@ A data dictionary of the features used in the most succesful model, (model 4). A
 |fireplaces | int | Ames data | the total number of fireplaces ||
 |cond | int | Ames data | The overall condiiton rating of the house  | rated 1-10|| 
 |gar_cars | int | Ames data | The number of cars that fit into the garage ||
-|cond_\*\*\* | category | Feature engineered | Special conditions that apply to the house | Dummified: 'Typ' rating is baseline |
+|condit_\*\*\* | category | Feature engineered | Special conditions that apply to the house | Dummified: 'Typ' rating is baseline, up to two conditions are possible |
 |MS Zoning_\*\*\* | category | Feature enginereed | Zoning code for the house (eg Residential, industrial) | Dummified: 'RL' is the baseline
 |Func_\*\*\*  | category | Feature engineered | Functionality for the house (eg. deductions, salvage) | Dummified: 'Typ' is the baseline
 |Neighborhood_\*\*\* | category | Feature engineered | Neighborhood | Dummified: 'NAmes' is the baseline |
@@ -151,7 +156,7 @@ A data dictionary of the features used in the most succesful model, (model 4). A
 
 In this project, I've built a predictive linear regression model to predict the sale price of houses in Ames, Iowa using the Ames dataset.
 
-After basic EDA and data cleaning (imputing values as appropriate, and removing a handful of rows), I constructed several different models of increasing complexity. The best-performing model is the most complex of the models I've constructed, consisting of 12 numerical features and 10 (dummified) categorical features. I did find that adding even more features to some extent leads to diminishing returns, in that the R2-value and root mean squared error (RMSE) of my most complex model was only modestly better than the model one step lower in complexity.
+After basic EDA and data cleaning (imputing values as appropriate, and removing a handful of rows), I constructed several different models of increasing complexity. The best-performing model is the most complex of the models I've constructed, consisting of 12 numerical features and 10 (dummified) categorical features. I did find that adding even more features to some extent leads to diminishing returns, in that the R2-value and root mean squared error (RMSE) of my most complex model was only modestly better than the model one step lower in complexity. Despite adding increasinly more features, it seems like model 4 is not yet overfit, so potentially even more features could be added to slightly improve the model score.
 
 OLS and Ridge regressors performed very similar, but it seems that the Ridge regression does slightly better overall. The fact that a Ridge model only improves slightly over OLS indicates that my model is not high in variance. The model works well for predictive purposes, significantly improving over the baseline model (a simple least squares regression using total living area as the only feature). In terms of the R2-score, the features in the more complex model can explain 88\% of the variance (vs 63% for the baseline), and the RMSE reduces from 47000 to 22100 dollars. This model can therefore be succesfully used to model the market value of houses in Ames, Iowa. One caveat is that the model would have to be retrained as new data comes in to keep up-to-date with the 'Year Sold' columns, as this is a categorical feature. The model also only applies to houses in Ames, Iowa, given the location-specific feature of Neighborhood. This model could serve as a template for similar models in other locations, but it would need local data to really have predictive power.
 
