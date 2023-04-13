@@ -15,10 +15,10 @@ To gauge the model performance, I will compare my results against a 'benchmark m
 This repository consists of the following:
 
 <ol>
-   <li> The directory <code>./code</code> contains the four notebooks notebook used for this analysis. In data_cleaning.ipynb, I do basic EDA and data cleaning of the data, checking for missing values and doing imputations. In feature_engineering.ipynb, I take a closer look at the data, try to figure out which features could best be used to model the sale price, and build 'model input' files for increasingly complex models. The model input files can be used for modeling with minimal processing. In modeling.ipynb, I load in these model input files and use them to build a variety of models. I use the r2 score, the cross-validation score, and the RMSE to evaluate which model does the best job at predicting sale prices. In modeling_insights.ipynb, I hone in on the best model(s), evaluate them in more detail, and compare them against the benchmark model. </li>
+   <li> The directory <code>./code</code> contains the four notebooks notebook used for this analysis. In data_cleaning.ipynb, I do basic EDA and data cleaning of the data, checking for missing values and doing imputations. In feature_engineering.ipynb, I take a closer look at the data, try to figure out which features could best be used to model the sale price, and build 'model input' files for increasingly complex models. The model input files can then be loaded in and used for modeling with minimal processing. In modeling.ipynb, I load in these model input files and use them to train a variety of models. I use the r2 score, the cross-validation score, and the RMSE to evaluate which model does the best job at predicting sale prices. In modeling_insights.ipynb, I hone in on the best model, evaluate them in more detail, and compare them against the benchmark model. </li>
    <li> The directory <code>./data</code> contains the input data csv files, train.csv and test.csv. It also includes the cleaned train and test data, as well as the Kaggle contest submission files, which consist of a set of housing IDs and predicted sale prices for those houses, using various models from the modeling notebook.
     <li> The directory <code>./model_inputs</code> contains the model input files constructed in feature_engineering.ipynb. These files can be loaded in and used to fit the model with minimal processing.
-   <li> The directory <code>./figures</code> contains all the figures that are made during the analysis in the notebooks, in .png formats </li>
+   <li> The directory <code>./figures</code> contains all the figures that are saved during the analysis in the notebooks, in .png formats </li>
     <li> The slides for the project presentation are in the file <code>project2_martijn_slides.pdf</code> </li>
 </ol>
 
@@ -56,11 +56,13 @@ The missing values can be defined into a few different categories, which I dealt
 
 I put all of the above imputations, together with some other minor cleaning steps (filtering out a few outliers, recasting a handful of columns to other datatypes) into a function called clean_ames(), so that both the testing and training dataset are cleaned in the exact same manner.
 
-## Feature Engineering
+## Feature Engineering and Preprocessing
 
 To start with, I looked at which numerical columns have a high correlation with sale price. This can be seen in the Figure below.
 
-<img src="./figures/saleprice_corr_heatmap.png" style="float: left; margin: 20px; height: 800px">
+<img src="./figures/saleprice_corr_heatmap.png" style="float: left; margin: 20px; height: 600px">
+
+Using this correlation heatmap together with further analysis, I selected features that seemed most likely to be good predictors of the sale price. I then constructed four models of increasing complexity.
 
 ### Model 1
 
@@ -80,15 +82,21 @@ For model 2, I added the total number of rooms aboveground, the number of bathro
 
 ### Model 3
 
-For model 3, I tested the validity of my 'adjusted' parameters. The number of features is the same as in model 2, but instead of using adjusted garage area, adjusted masonry veneer area, and adjusted number of fireplaces, I put the unadjusted features back in
+For model 3, I tested the validity of my 'adjusted' parameters. The number of features is the same as in model 2, but instead of using adjusted garage area, adjusted masonry veneer area, and adjusted number of fireplaces.
 
 ### Model 4
 
-Finally, for my most complex model, I used the same features as Model 3 but added a bunch of extra columsn
+Finally, for my most complex model, I used the same features as Model 3 but added a bunch of extra features. I added 3 numerical columns: the Lot Frontage, the number of cars that fit into the garage, and the overall condition rating of the house. I also added a bunch of extra categorical features, namely the Basement Quality, whether the house has Central Airconditioning or not, whether the house has an alley or not, and what kind of Driveway there is. Finally, I added the Yr Sold as a categorical variable. Since this data set is from between 2006 and 2010, I figured that the 2008 financial crisis might have affected the sale prices for some years. The figure below again shows the relationship between the log of the price and the added numerical columns
+
+<img src="./figures/pairplot_m2_logprice.png" style="float: left; margin: 20px; height: 200px">
+
+## Modeling
+
+
 
 ## Data Dictionary 
 
-A data dictionary of the features used in the most succesful model (model 4). All features are from the Ames housing data set - 'Feature engineered' indicates that additional processing was done to the columns before inputting them into the model.
+A data dictionary of the features used in the most succesful model (model 4). All features are from the Ames housing data set - 'Feature engineered' indicates that additional processing was done to the columns before inputting them into the model. The triple asterisk indicates dummy features (eg. for Basement Quality, there is a 'Bsmt Qual_Po', 'Bsmt Qual_Ex', etc).
 
 |Feature|Type|Dataset|Description|Encoding Info|
 |---|---|---|---|---|
