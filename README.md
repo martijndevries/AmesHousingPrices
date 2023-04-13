@@ -63,13 +63,67 @@ To start with, I looked at which numerical columns have a high correlation with 
 <img src="./figures/saleprice_corr_heatmap.png" style="float: left; margin: 20px; height: 800px">
 
 ### Model 1
+
 I combined the 'Gr Liv Area' (above grade living area, in square feet) and 'Tot Bsmt SF' (Basement living area, in square feet) into a new feature: tot_area. This indicates the total living area of the house. I also included 'Overall Qual' (the quality rating of the house) into the model, as well as the year it was built and the year the house was remodeled/added to. One thing to note is that for the build year and remodeling year, the relationship to the target variable (Sale price) seems much more linear if I take the log of the sale price.
 
 Additionally, for certain features I attempted to calculate 'adjusted values'. For model 1, in the above heatmap I noticed that the 'Garage Area' correlated well with Sale Price. But, because I'm assuming that a single square foot of garage of an garage rated 'excellent' might count for more than from a garage rated 'poor', I adjust the garage area based on both the garage rating and the style of the garage.
 
 Finally, for model 1 I also added the MS Zoning code and the Home functionality as categorical variables, which I turned into dummy variables. The figure below shows the correlation between the numerical columns in model 1 and the log the sale price.
 
-<img src="./figures/pairplot_m1_logprice.png" style="float: left; margin: 20px; height: 200px">
-
+<img src="./figures/pairplot_m1_logprice.png" style="float: left; margin: 20px; height: 300px">
 
 ### Model 2
+
+For model 2, I added the total number of rooms aboveground, the number of bathrooms without any further processing. I also made adjusted columns for the number of fireplaces (adjusted by the fireplace quality) and the the masonry veneer area (adjusted by the type of veneer). Finally, I added another categorical location feature using the 'Neighborhood' column. The pair plot below shows the relationship of the new numerical features to the log of the sale price.
+
+<img src="./figures/pairplot_m2_logprice.png" style="float: left; margin: 20px; height: 300px">
+
+### Model 3
+
+For model 3, I tested the validity of my 'adjusted' parameters. The number of features is the same as in model 2, but instead of using adjusted garage area, adjusted masonry veneer area, and adjusted number of fireplaces, I put the unadjusted features back in
+
+### Model 4
+
+Finally, for my most complex model, I used the same features as Model 3 but added a bunch of extra columsn
+
+## Data Dictionary 
+
+A data dictionary of the features used in the most succesful model (model 4). All features are from the Ames housing data set - 'Feature engineered' indicates that additional processing was done to the columns before inputting them into the model.
+
+|Feature|Type|Dataset|Description|Encoding Info|
+|---|---|---|---|---|
+|ID | int | Ames data | ***Primary Key***-The house ID in the Ames housing data set || 
+|tot_area | float | Feature Engineered | The total living area in square feet|Sum of above-grade SF and basement SF|
+|gar_area| float | Ames data | the Garage area in square feet ||
+|lot_frontage | float | Ames data | the total amount of lot frontage in linear feet| 
+|yr_built | int | Ames data | the year the house was built | |
+|yr_remod | int | Ames data | the year the house was remodeled or added to | |
+|qual | int | Ames data | The overall quality rating of the house | rated 1-10|
+|tot_rooms_abv | int | Ames data | The total number of rooms above ground | |
+|full_bath | int | Ames data | the total number of bathrooms | |
+|mas_vnr_area | float | Ames data | the total surface area of masonry veneer  | |
+|fireplaces | int | Ames data | the total number of fireplaces ||
+|cond | int | Ames data | The overall condiiton rating of the house  | rated 1-10|| 
+|gar_cars | int | Ames data | The number of cars that fit into the garage ||
+|cond_\*\*\* | category | Feature engineered | Special conditions that apply to the house | Dummified: 'Typ' rating is baseline |
+|MS Zoning_\*\*\* | category | Feature enginereed | Zoning code for the house (eg Residential, industrial) | Dummified: 'RL' is the baseline
+|Func_\*\*\*  | category | Feature engineered | Functionality for the house (eg. deductions, salvage) | Dummified: 'Typ' is the baseline
+|Neighborhood_\*\*\* | category | Feature engineered | Neighborhood | Dummified: 'NAmes' is the baseline |
+|Kitchen Qual_\*\*\* | category | Feature engineered | Quality rating of the kitchen (good, poor, fair, etc) |  Dummified: 'TA' is the baseline
+|Bsmt Qual_\*\*\* | category | Feature engineered | Quality rating of the basement (good, poor, fair, etc) |  Dummified: 'TA' is the baseline
+|Central Air_\*\*\* | category | Feature engineered | Whether the house has central air conditioning or not |  Dummified: 'Y' is the baseline
+|Alley_\*\*\* | category | Feature engineered | Whether the house has an alley and what type |  Dummified: 'NP' is the baseline
+|Paved Drive_\*\*\* | category | Feature engineered | Is there a paved driveway |  Dummified: 'Y' is the baseline
+|Yr Sold_\*\*\* | category | Feature engineered | Year the house was sold |  Dummified: '2006' is the baseline
+|Saleprice | int |Ames data | ***Target variable***-the sale price in dollars | I use log(Saleprice) in the actual regression |
+
+
+## Conclusions
+
+In this project, I've built a predictive linear regression model to predict the sale price of houses in Ames, Iowa using the Ames dataset.
+
+After basic EDA and data cleaning (imputing values as appropriate, and removing a handful of rows), I constructed several different models of increasing complexity. The best-performing model is the most complex of the models I've constructed, consisting of 12 numerical features and 10 (dummified) categorical features. I did find that adding even more features to some extent leads to diminishing returns, in that the R2-value and root mean squared error (RMSE) of my most complex model was only modestly better than the model one step lower in complexity.
+
+OLS and Ridge regressors performed very similar, but it seems that the Ridge regression does slightly better overall. The fact that a Ridge model only improves slightly over OLS indicates that my model is not high in variance. The model works well for predictive purposes, significantly improving over the baseline model (a simple least squares regression using total living area as the only feature). In terms of the R2-score, the features in the more complex model can explain 88% of the variance (vs 63% for the baseline), and the RMSE reduces from 47000 to 22100 dollars. This model can therefore be succesfully used to model the market value of houses in Ames, Iowa. One caveat is that the model would have to be retrained as new data comes in to keep up-to-date with the 'Year Sold' columns, as this is a categorical feature. The model also only applies to houses in Ames, Iowa, given the location-specific feature of Neighborhood. This model could serve as a template for similar models in other locations, but it would need local data to really have predictive power.
+
+The model could likely be improved even more with better feature engineering: a more detailed analysis of which features should be included, and/or smarter encoding of categorical features could reduce the model complexity while still retaining the same level of predictive power. The scope of this project was limited to Linear Regression, but other type of regressions might improve the model performance well.
