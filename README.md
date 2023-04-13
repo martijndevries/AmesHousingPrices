@@ -43,7 +43,7 @@ We can already see that the distribution is pretty right-skewed!
 
 After general inspection of the data, we looked at missing values. The image below shows all the columns in the training set in which missing values were detected. The grey line shows the total number of rows in the training set.
 
-<img src="./figures/missingvals.png" style="float: left; margin: 20px; height: 550px">
+<img src="./figures/missingvals.png" style="float: left; margin: 20px; height: 650px">
 
 The missing values can be defined into a few different categories, which I dealt with in different ways:
 
@@ -96,12 +96,15 @@ For each of the tested models, I split the data into a training set and a 'valid
 
 ### Benchmark Model
 
-As the Benchmark model, I used a simple OLS regression, using 'tot_area' as the single feature and the sale price as the predictor variable. This model already performs decently b
+As the Benchmark model, I used a simple OLS regression, using 'tot_area' as the single feature and the sale price as the predictor variable. This model already performs decently by itself: the r2-scores on the training and validation data are 0.69 and 0.64, respectively, indicating that 64% of the variance of the model can be explained by the tot_area parameter. The validation RMSE is \$47000. These are the benchmarks I compare the model against.
+
+### Model 4
+
 
 
 ## Data Dictionary 
 
-A data dictionary of the features used in the most succesful model (model 4). All features are from the Ames housing data set - 'Feature engineered' indicates that additional processing was done to the columns before inputting them into the model. The triple asterisk indicates dummy features (eg. for Basement Quality, there is a 'Bsmt Qual_Po', 'Bsmt Qual_Ex', etc).
+A data dictionary of the features used in the most succesful model, (model 4). All features are from the Ames housing data set - 'Feature engineered' indicates that additional processing was done to the columns before inputting them into the model. The triple asterisk indicates dummy features (eg. for Basement Quality, there is a 'Bsmt Qual_Po', 'Bsmt Qual_Ex', etc).
 
 |Feature|Type|Dataset|Description|Encoding Info|
 |---|---|---|---|---|
