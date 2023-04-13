@@ -69,7 +69,7 @@ Additionally, for certain features I attempted to calculate 'adjusted values'. F
 
 Finally, for model 1 I also added the MS Zoning code and the Home functionality as categorical variables, which I turned into dummy variables. The figure below shows the correlation between the numerical columns in model 1 and the log the sale price.
 
-<img src="./figures/pairplot_m1_logprice.png" style="float: left; margin: 20px; height: 800px">
+<img src="./figures/pairplot_m1_logprice.png" style="float: left; margin: 20px; height: 200px">
 
 
 ### Model 2
