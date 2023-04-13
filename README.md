@@ -62,7 +62,12 @@ To start with, I looked at which numerical columns have a high correlation with 
 
 <img src="./figures/saleprice_corr_heatmap.png" style="float: left; margin: 20px; height: 500px">
 
-Using this correlation heatmap together with further analysis, I selected features that seemed most likely to be good predictors of the sale price. I then constructed four models of increasing complexity.
+Using this correlation heatmap together with further analysis, I selected features that seemed most likely to be good predictors of the sale price. I then constructed four models of increasing complexity. 
+
+For the baseline model. I combined the 'Gr Liv Area' (above grade living area, in square feet) and 'Tot Bsmt SF' (Basement living area, in square feet) into a new feature: tot_area. In the figure below, I plot tot_area versus log(Saleprice)
+
+<img src="./figures/area_log_saleprice.png" style="float: left; margin: 20px; height: 500px">
+
 
 ### Model 1
 
@@ -104,11 +109,13 @@ During the modeling, I found that using a log-transform of the sale price works 
 
 The figures below show 1) the predicted values versus the residuals (in logspace), and 2) the predicted versus the actual sale prices.
 
-<img src="./figures/res_predicted_plot.png" styele="float: left; margin: 20px; height: 500px">
+<img src="./figures/res_predicted_plot.png" styele="float: left; margin: 20px; height: 7s00px">
 
-There is one egregious outlier, a house that sold for around \$12000  but has a model-predicted sale price of around \$66000. I did notice this house during the feature engineering process, but I could not find a good reason to get rid of it, so I opted to keep it in.
+There is one pretty bad outlier, a house that sold for around \\$12000  but has a model-predicted sale price of around \\$66000. I did notice this house during the feature engineering process, but I could not find a good reason to get rid of it, so I opted to keep it in.
 
-## Data Dictionary of Model 4
+The best model has a training r2-score of 0.92, a cross-validation r2 of 0.91, a validation r2 score of 0.88. In terms of RMSE, the training and validation scores RMSE scores are 21596 and 22103, respectively. That means this model can explain about 88% of the variance in sale price (versus 64% for the baseline model), and that the RMSE is reduced by about 53\%. 
+
+## Data Dictionary of Model 4 features
 
 A data dictionary of the features used in the most succesful model, (model 4). All features are from the Ames housing data set - 'Feature engineered' indicates that additional processing was done to the columns before inputting them into the model. The triple asterisk indicates dummy features (eg. for Basement Quality, there is a 'Bsmt Qual_Po', 'Bsmt Qual_Ex', etc).
 
@@ -146,6 +153,6 @@ In this project, I've built a predictive linear regression model to predict the 
 
 After basic EDA and data cleaning (imputing values as appropriate, and removing a handful of rows), I constructed several different models of increasing complexity. The best-performing model is the most complex of the models I've constructed, consisting of 12 numerical features and 10 (dummified) categorical features. I did find that adding even more features to some extent leads to diminishing returns, in that the R2-value and root mean squared error (RMSE) of my most complex model was only modestly better than the model one step lower in complexity.
 
-OLS and Ridge regressors performed very similar, but it seems that the Ridge regression does slightly better overall. The fact that a Ridge model only improves slightly over OLS indicates that my model is not high in variance. The model works well for predictive purposes, significantly improving over the baseline model (a simple least squares regression using total living area as the only feature). In terms of the R2-score, the features in the more complex model can explain 88% of the variance (vs 63% for the baseline), and the RMSE reduces from 47000 to 22100 dollars. This model can therefore be succesfully used to model the market value of houses in Ames, Iowa. One caveat is that the model would have to be retrained as new data comes in to keep up-to-date with the 'Year Sold' columns, as this is a categorical feature. The model also only applies to houses in Ames, Iowa, given the location-specific feature of Neighborhood. This model could serve as a template for similar models in other locations, but it would need local data to really have predictive power.
+OLS and Ridge regressors performed very similar, but it seems that the Ridge regression does slightly better overall. The fact that a Ridge model only improves slightly over OLS indicates that my model is not high in variance. The model works well for predictive purposes, significantly improving over the baseline model (a simple least squares regression using total living area as the only feature). In terms of the R2-score, the features in the more complex model can explain 88\% of the variance (vs 63% for the baseline), and the RMSE reduces from 47000 to 22100 dollars. This model can therefore be succesfully used to model the market value of houses in Ames, Iowa. One caveat is that the model would have to be retrained as new data comes in to keep up-to-date with the 'Year Sold' columns, as this is a categorical feature. The model also only applies to houses in Ames, Iowa, given the location-specific feature of Neighborhood. This model could serve as a template for similar models in other locations, but it would need local data to really have predictive power.
 
 The model could likely be improved even more with better feature engineering: a more detailed analysis of which features should be included, and/or smarter encoding of categorical features could reduce the model complexity while still retaining the same level of predictive power. The scope of this project was limited to Linear Regression, but other type of regressions might improve the model performance well.
