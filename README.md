@@ -70,13 +70,13 @@ Additionally, for certain features I attempted to calculate 'adjusted values'. F
 
 Finally, for model 1 I also added the MS Zoning code and the Home functionality as categorical variables, which I turned into dummy variables. The figure below shows the correlation between the numerical columns in model 1 and the log the sale price.
 
-<img src="./figures/pairplot_m1_logprice.png" style="float: left; margin: 20px; height: 300px">
+<img src="./figures/pairplot_m1_logprice.png" style="float: left; margin: 20px; height: 200px">
 
 ### Model 2
 
 For model 2, I added the total number of rooms aboveground, the number of bathrooms without any further processing. I also made adjusted columns for the number of fireplaces (adjusted by the fireplace quality) and the the masonry veneer area (adjusted by the type of veneer). Finally, I added another categorical location feature using the 'Neighborhood' column. The pair plot below shows the relationship of the new numerical features to the log of the sale price.
 
-<img src="./figures/pairplot_m2_logprice.png" style="float: left; margin: 20px; height: 300px">
+<img src="./figures/pairplot_m2_logprice.png" style="float: left; margin: 20px; height: 200px">
 
 ### Model 3
 
