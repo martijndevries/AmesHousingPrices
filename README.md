@@ -88,7 +88,7 @@ For model 3, I tested the validity of my 'adjusted' parameters. The number of fe
 
 Finally, for my most complex model, I used the same features as Model 3 but added a bunch of extra features. I added 3 numerical columns: the Lot Frontage, the number of cars that fit into the garage, and the overall condition rating of the house. I also added a number of extra categorical features, namely the Basement Quality, whether the house has Central Airconditioning or not, whether the house has an alley or not, and what kind of Driveway there is. Finally, I added the Yr Sold as a categorical variable. Since this data set is from between 2006 and 2010, I figured that the 2008 financial crisis might have affected the sale prices for some years. The figure below again shows the relationship between the log of the price and the added numerical columns
 
-<img src="./figures/pairplot_m2_logprice.png" style="float: left; margin: 20px; height: 180px">
+<img src="./figures/pairplot_m4_logprice.png" style="float: left; margin: 20px; height: 180px">
 
 ## Modeling
 
@@ -100,9 +100,15 @@ As the Benchmark model, I used a simple OLS regression, using 'tot_area' as the 
 
 ### Model 4
 
+During the modeling, I found that using a log-transform of the sale price works best overall. This is maybe not surprising, given how right-skewed the sale price distribution is, and how many variables seem to have a somewhat linear relationship with log(saleprice). I also found that both OLS and Ridge regression work well, with Ridge regression giving only a minor improvement over OLS. Additionally, I used the RidgeCV() regressor of sklearn to find which penalty term alpha gives the best results using the cross-validation score. Overall, I find that the results obtained with Ridge regression are very similar to those obtained with OLS, indicating that even the most complex of my models is still relatively low in variance, and not overfit.
 
+The figures below show 1) the predicted values versus the residuals (in logspace), and 2) the predicted versus the actual sale prices.
 
-## Data Dictionary 
+<img src="./figures/res_predicted_plot.png" styele="float: left; margin: 20px; height: 500px">
+
+There is one egregious outlier, a house that sold for around \$12000  but has a model-predicted sale price of around \$66000. I did notice this house during the feature engineering process, but I could not find a good reason to get rid of it, so I opted to keep it in.
+
+## Data Dictionary of Model 4
 
 A data dictionary of the features used in the most succesful model, (model 4). All features are from the Ames housing data set - 'Feature engineered' indicates that additional processing was done to the columns before inputting them into the model. The triple asterisk indicates dummy features (eg. for Basement Quality, there is a 'Bsmt Qual_Po', 'Bsmt Qual_Ex', etc).
 
