@@ -60,7 +60,7 @@ I put all of the above imputations, together with some other minor cleaning step
 
 To start with, I looked at which numerical columns have a high correlation with sale price. This can be seen in the Figure below.
 
-<img src="./figures/saleprice_corr_heatmap.png" style="float: left; margin: 20px; height: 600px">
+<img src="./figures/saleprice_corr_heatmap.png" style="float: left; margin: 20px; height: 420px">
 
 Using this correlation heatmap together with further analysis, I selected features that seemed most likely to be good predictors of the sale price. I then constructed four models of increasing complexity.
 
@@ -86,12 +86,17 @@ For model 3, I tested the validity of my 'adjusted' parameters. The number of fe
 
 ### Model 4
 
-Finally, for my most complex model, I used the same features as Model 3 but added a bunch of extra features. I added 3 numerical columns: the Lot Frontage, the number of cars that fit into the garage, and the overall condition rating of the house. I also added a bunch of extra categorical features, namely the Basement Quality, whether the house has Central Airconditioning or not, whether the house has an alley or not, and what kind of Driveway there is. Finally, I added the Yr Sold as a categorical variable. Since this data set is from between 2006 and 2010, I figured that the 2008 financial crisis might have affected the sale prices for some years. The figure below again shows the relationship between the log of the price and the added numerical columns
+Finally, for my most complex model, I used the same features as Model 3 but added a bunch of extra features. I added 3 numerical columns: the Lot Frontage, the number of cars that fit into the garage, and the overall condition rating of the house. I also added a number of extra categorical features, namely the Basement Quality, whether the house has Central Airconditioning or not, whether the house has an alley or not, and what kind of Driveway there is. Finally, I added the Yr Sold as a categorical variable. Since this data set is from between 2006 and 2010, I figured that the 2008 financial crisis might have affected the sale prices for some years. The figure below again shows the relationship between the log of the price and the added numerical columns
 
 <img src="./figures/pairplot_m2_logprice.png" style="float: left; margin: 20px; height: 200px">
 
 ## Modeling
 
+For each of the tested models, I split the data into a training set and a 'validation' set (to not get confused with the test set, which is the data we do <i>not</i> have the sale price for). I then trained the model on the training data, and calculated the R2-score on both the training and validation data. I also calculated the cross-validation score on the training data, as well as the root mean squared error (RMSE) on both the training and validation data. I tested out all the models above, but will only highlight the benchmark model
+
+### Benchmark Model
+
+As the Benchmark model, I used a simple OLS regression, using 'tot_area' as the single feature and the sale price as the predictor variable. This model already performs decently b
 
 
 ## Data Dictionary 
