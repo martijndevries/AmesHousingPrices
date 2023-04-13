@@ -50,10 +50,26 @@ The missing values can be defined into a few different categories, which I dealt
 <ol>
     <li> A few of the columns have 'NA' (Not applicable) as a category. Eg. for the 'Alley' column, some houses do not have an Alley and thus have 'NA' filled in. Pandas erroneously interprets this as a NaN when loading in the data. In these cases, I simply imputed the value 'NP' (Not present) </li>
     <li> There were a few numerical columns that were directly related to the above columns - eg some houses in which a garage was not present, had a missing value for the 'Garage Area' column. In those cases, it made logical sense to impute a value of zero. This was also the case for some columns related to the basement, and the Masonry veneer. </li>
-    <li> The 'Lot frontage' column represented a special case. Around 15% of houses have missing entries, which is quite significant. The value here certainly can't be zero, as houses are typically required/expected to have street access. What I did instead was to make the assumption that a property is roughly square, and will have frontage on one side. The Lot frontage should therefore be proportional to the square root of the lot area. I tested this assumption and it seems that this holds up roughly speaking, if we subtract some constant. I used this equation to impute the missing Lot frontage value</li>
+    <li> The 'Lot frontage' column represented a special case. Around 15% of houses have missing entries, which is quite significant. The value here is not likely to be zero from a logical standpoint, as houses are typically required/expected to have street access. What I did instead was to make the assumption that a property is roughly square, and will have frontage on one side. The Lot frontage should therefore be proportional to the square root of the lot area. I tested this assumption and it seems that this holds up roughly speaking, if we subtract some constant. I used this equation to impute the missing Lot frontage value</li>
     <li> For all the remaining missing values, I imputed the mode (if categorical) or the median (if numerical). These imputations were typically only 1 or 2 rows for each category, so they will likely have a minor effect </li>
 </ol>
 
 I put all of the above imputations, together with some other minor cleaning steps (filtering out a few outliers, recasting a handful of columns to other datatypes) into a function called clean_ames(), so that both the testing and training dataset are cleaned in the exact same manner.
 
 ## Feature Engineering
+
+To start with, I looked at which numerical columns have a high correlation with sale price. This can be seen in the Figure below.
+
+<img src="./figures/saleprice_corr_heatmap.png" style="float: left; margin: 20px; height: 800px">
+
+### Model 1
+I combined the 'Gr Liv Area' (above grade living area, in square feet) and 'Tot Bsmt SF' (Basement living area, in square feet) into a new feature: tot_area. This indicates the total living area of the house. I also included 'Overall Qual' (the quality rating of the house) into the model, as well as the year it was built and the year the house was remodeled/added to. One thing to note is that for the build year and remodeling year, the relationship to the target variable (Sale price) seems much more linear if I take the log of the sale price.
+
+Additionally, for certain features I attempted to calculate 'adjusted values'. For model 1, in the above heatmap I noticed that the 'Garage Area' correlated well with Sale Price. But, because I'm assuming that a single square foot of garage of an garage rated 'excellent' might count for more than from a garage rated 'poor', I adjust the garage area based on both the garage rating and the style of the garage.
+
+Finally, for model 1 I also added the MS Zoning code and the Home functionality as categorical variables, which I turned into dummy variables. The figure below shows the correlation between the numerical columns in model 1 and the log the sale price.
+
+<img src="./figures/pairplot_m1_logprice.png" style="float: left; margin: 20px; height: 800px">
+
+
+### Model 2
