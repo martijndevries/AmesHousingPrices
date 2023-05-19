@@ -1,4 +1,4 @@
-# Project 2 - Ames Housing Data and Kaggle Challenge
+# Predicting House Prices in Ames, Iowa
 
 by Martijn de Vries </br>
 martijndevries91@gmail.com
@@ -18,7 +18,6 @@ This repository consists of the following:
    <li> The directory <code>./data</code> contains the input data csv files, train.csv and test.csv. It also includes the cleaned train and test data, as well as the Kaggle contest submission files, which consist of a set of housing IDs and predicted sale prices for those houses, using various models from the modeling notebook.
     <li> The directory <code>./model_inputs</code> contains the model input files constructed in feature_engineering.ipynb. These files can be loaded in and used to fit the model with minimal processing.
    <li> The directory <code>./figures</code> contains all the figures that are saved during the analysis in the notebooks, in .png formats </li>
-    <li> The slides for the project presentation are in the file <code>project2_martijn_slides.pdf</code> </li>
 </ol>
 
 Below, I will provide a summary of the EDA, data cleaning, feature engineering, and modeling procedure. More details and figures can be found in each of the notebooks.
